@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Route } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import Cookies from "universal-cookie";
+
+import Login from "./components/Login";
 
 function App() {
+  const cookies = new Cookies();
+
+  const [username, setUsername] = useState(cookies.get("username"));
+  const [token, setToken] = useState(cookies.get("token"));
+  const [admin, setAdmin] = useState(cookies.get("admin"));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Route exact path="/">
+        <LandingPage />
+      </Route>
+      <Route exact path="/login">
+        <Login />
+      </Route>
+    </>
   );
 }
 

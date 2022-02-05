@@ -15,6 +15,57 @@ app.use(express.urlencoded({ extended: false }));
 
 //routes
 
+//login
+
+//generate jwt token
+function generateAccessToken(user) {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1800s",
+  });
+}
+
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await pool.query(
+      "SELECT * FROM customers WHERE username = $1",
+      [username]
+    );
+    userDetails = user.rows[0];
+
+    if (userDetails) {
+      const validPass = await bcrypt.compare(
+        password,
+        userDetails.userpassword
+      );
+
+      if (validPass) {
+        const user = {
+          username: username,
+          password: userDetails.userpassword,
+          isAdmin: userDetails.admin,
+        };
+        const accessToken = generateAccessToken(user);
+
+        res.cookie("token", accessToken, { httpOnly: true });
+
+        res.json({
+          loggedIn: true,
+          admin: userDetails.admin,
+          accessToken: accessToken,
+          username: userDetails.username,
+        });
+      } else {
+        res.json("Incorrect Password");
+      }
+    } else {
+      res.status(404).json("Username not found");
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 //register
 app.post("/register", async (req, res) => {
   try {
