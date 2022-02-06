@@ -1,14 +1,20 @@
 import React from "react";
+import { Container, Text, Button, Box } from "@chakra-ui/react";
 
 const AddressCard = (props) => {
   return (
-    <div>
-      <p>{props.address_line1}</p>
-      <p>{props.address_line2}</p>
-      <p>{props.postal_code}</p>
-      <p>{props.country}</p>
-      <p>{props.address_type}</p>
-    </div>
+    <Container>
+      <Box>
+        <Text>{props.name}</Text>
+        <Text>{props.address1}</Text>
+        <Text>{props.address2}</Text>
+        <Text>{props.postal_code}</Text>
+        <Text>{props.country}</Text>
+        <Text>{props.address_type}</Text>
+        <Button>Edit</Button>
+        <Button>Delete</Button>
+      </Box>
+    </Container>
   );
 };
 

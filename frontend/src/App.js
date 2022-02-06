@@ -6,6 +6,8 @@ import Cookies from "universal-cookie";
 import Login from "./components/Login";
 import UserDetails from "./components/UserDetails";
 import UserPage from "./components/UserPage";
+import Address from "./components/Address";
+import NewAddress from "./components/NewAddress";
 
 function App() {
   const cookies = new Cookies();
@@ -27,6 +29,12 @@ function App() {
       </Route>
       <Route exact path="/user/edit">
         <UserDetails />
+      </Route>
+      <Route exact path="/user/address">
+        <Address />
+      </Route>
+      <Route exact path="/user/address/add">
+        <NewAddress />
       </Route>
     </>
   );

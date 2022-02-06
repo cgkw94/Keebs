@@ -93,7 +93,6 @@ app.post("/register", async (req, res) => {
       username: userDetails.username,
     });
   } catch (err) {
-    // console.error(err.message);
     res.json(err.message);
   }
 });
@@ -151,6 +150,7 @@ app.patch("/user/update", auth, async (req, res) => {
 
 //create address
 app.post("/user/address", auth, async (req, res) => {
+  console.log(req.body);
   const {
     customer_id,
     address_line1,
@@ -175,7 +175,22 @@ app.post("/user/address", auth, async (req, res) => {
       ]
     );
 
-    res.json(newAddress.rows[0]);
+    res.json("Address added");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get address
+app.get("/user/address", auth, async (req, res) => {
+  try {
+    const { username } = req.user;
+
+    const user = await pool.query(
+      "SELECT * FROM addresses WHERE customer_id = (SELECT customer_id FROM customers WHERE username=$1)",
+      [username]
+    );
+    res.json(user.rows);
   } catch (err) {
     console.error(err.message);
   }

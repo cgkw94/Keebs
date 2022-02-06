@@ -110,6 +110,10 @@ const UserDetails = () => {
     });
     const data = await res.json();
     setError(data);
+
+    if (data === "Update successful") {
+      window.location.href = "/user";
+    }
   };
 
   const handleNewDetails = (e) => {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { Container, Text, Button, Box } from "@chakra-ui/react";
 
 const UserPage = () => {
   const cookies = new Cookies();
@@ -32,18 +33,54 @@ const UserPage = () => {
     });
   };
 
-  console.log(userDetails);
   useEffect(() => {
     fetchUserDetails("http://localhost:5002/user/");
   }, []);
 
-  return (
-    <div>
-      <h1> My Account</h1>
-      <h4> Logout </h4>
+  const handleEditButton = () => {
+    window.location.href = "/user/edit";
+  };
 
-      <h3>Account Details</h3>
-    </div>
+  const handleAddressButton = () => {
+    window.location.href = "/user/address";
+  };
+
+  return (
+    <Container>
+      <Container>
+        <Text>My Account</Text>
+        <Text>Logout</Text>
+      </Container>
+      <Box>
+        <Text align="center">Account Details</Text>
+        <Box maxW="m" borderRadius="lg">
+          <Box align="center">
+            <Text as="u">Username: </Text>
+            {userDetails.username}
+          </Box>
+          <Box align="center">
+            <Text as="u">First Name: </Text>
+            {userDetails.first_name}
+          </Box>
+          <Box align="center">
+            <Text as="u">Last Name: </Text>
+            {userDetails.last_name}
+          </Box>
+          <Box align="center">
+            <Text as="u">Mobile Number: </Text>
+            {userDetails.mobile_number}
+          </Box>
+          <Box align="center">
+            <Text as="u">Email: </Text>
+            {userDetails.email}
+          </Box>
+          <Box align="center">
+            <Button onClick={handleEditButton}>Edit</Button>
+            <Button onClick={handleAddressButton}>View Addresses</Button>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
