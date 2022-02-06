@@ -32,7 +32,8 @@ const Login2 = () => {
     email: "",
   });
 
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
+
   const handleClick = () => setShow(!show);
 
   const cookies = new Cookies();
@@ -70,6 +71,8 @@ const Login2 = () => {
         path: "/",
         maxAge: 2 * 60 * 60,
       });
+
+      window.location.href = "/";
     } else {
       setError(data);
     }
@@ -156,6 +159,15 @@ const Login2 = () => {
       body: JSON.stringify(newUser),
     });
     const data = await res.json();
+
+    if (
+      data ===
+      'duplicate key value violates unique constraint "unique_username"'
+    ) {
+      setError("Username taken");
+    } else {
+      window.location.reload();
+    }
   };
 
   return (

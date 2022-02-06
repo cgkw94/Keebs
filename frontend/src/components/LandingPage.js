@@ -4,15 +4,19 @@ import Cookies from "universal-cookie";
 const LandingPage = () => {
   const cookies = new Cookies();
 
-  const [username, setUsername] = useState(cookies.get("username"));
-  const [token, setToken] = useState(cookies.get("token"));
-  const [admin, setAdmin] = useState(cookies.get("admin"));
+  const storedJwt = cookies.get("token");
+  const storedUsername = cookies.get("username");
+  const storedAdmin = cookies.get("admin");
+  const storedLogged = cookies.get("loggedIn");
 
-  console.log(cookies.get("username"));
+  const [jwt, setJwt] = useState(storedJwt || null);
+  const [username, setUsername] = useState(storedUsername || null);
+  const [admin, setAdmin] = useState(storedAdmin || null);
+  const [isLogged, setIsLogged] = storedLogged || null;
 
   return (
     <div>
-      <p>blahs</p>
+      <p>{jwt}</p>
     </div>
   );
 };

@@ -4,6 +4,8 @@ import LandingPage from "./components/LandingPage";
 import Cookies from "universal-cookie";
 
 import Login from "./components/Login";
+import UserDetails from "./components/UserDetails";
+import UserPage from "./components/UserPage";
 
 function App() {
   const cookies = new Cookies();
@@ -19,6 +21,12 @@ function App() {
       </Route>
       <Route exact path="/login">
         <Login />
+      </Route>
+      <Route exact path="/user">
+        <UserPage />
+      </Route>
+      <Route exact path="/user/edit">
+        <UserDetails />
       </Route>
     </>
   );

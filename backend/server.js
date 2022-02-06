@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 //generate jwt token
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1800s",
+    expiresIn: "604800s",
   });
 }
 
@@ -46,8 +46,6 @@ app.post("/login", async (req, res) => {
           isAdmin: userDetails.admin,
         };
         const accessToken = generateAccessToken(user);
-
-        res.cookie("token", accessToken, { httpOnly: true });
 
         res.json({
           loggedIn: true,
@@ -86,22 +84,29 @@ app.post("/register", async (req, res) => {
       [username, hash, first_name, last_name, mobile_number, email, admin]
     );
 
-    res.json(newUser.rows[0]);
+    const userDetails = newUser.rows[0];
+
+    res.json({
+      loggedIn: true,
+      admin: userDetails.admin,
+      accessToken: accessToken,
+      username: userDetails.username,
+    });
   } catch (err) {
-    console.error(err.message);
+    // console.error(err.message);
+    res.json(err.message);
   }
 });
 
 //user details
 app.get("/user", auth, async (req, res) => {
   try {
-    const { username, password } = req.user;
-    console.log(req.user);
+    const { username } = req.user;
     const user = await pool.query(
       "SELECT * FROM customers WHERE username = $1",
       [username]
     );
-    res.json(user.rows);
+    res.json(user.rows[0]);
   } catch (err) {
     console.error(err.message);
   }
@@ -110,16 +115,17 @@ app.get("/user", auth, async (req, res) => {
 //update user details
 app.patch("/user/update", auth, async (req, res) => {
   try {
-    const { username, password } = req.user;
+    const { password } = req.user;
 
     const {
+      customer_id,
       oldPassword,
       newPassword,
       first_name,
       last_name,
       mobile_number,
       email,
-    } = req.body;
+    } = req.body.userDetails;
 
     const validOldPass = await bcrypt.compare(oldPassword, password);
 
@@ -130,14 +136,46 @@ app.patch("/user/update", auth, async (req, res) => {
       } else {
         const hash = await bcrypt.hash(newPassword, 10);
         await pool.query(
-          "UPDATE customers SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5 WHERE username = $6",
-          [hash, first_name, last_name, mobile_number, email, username]
+          "UPDATE customers SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5 WHERE customer_id = $6",
+          [hash, first_name, last_name, mobile_number, email, customer_id]
         );
         res.json("Update successful");
       }
     } else {
       res.json("Old password is incorrect");
     }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//create address
+app.post("/user/address", auth, async (req, res) => {
+  const {
+    customer_id,
+    address_line1,
+    address_line2,
+    postal_code,
+    country,
+    address_type,
+    name,
+  } = req.body;
+
+  try {
+    const newAddress = await pool.query(
+      "INSERT INTO addresses (customer_id, address_line1, address_line2, postal_code, country, address_type, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [
+        customer_id,
+        address_line1,
+        address_line2,
+        postal_code,
+        country,
+        address_type,
+        name,
+      ]
+    );
+
+    res.json(newAddress.rows[0]);
   } catch (err) {
     console.error(err.message);
   }
