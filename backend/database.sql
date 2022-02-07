@@ -46,6 +46,12 @@ CREATE TABLE inventories (
   PRIMARY KEY ("inventory_id")
 );
 
+CREATE TABLE list_details (
+  list_details_id SERIAL NOT NULL,
+  name varchar(50),
+  PRIMARY KEY ("list_details_id")
+);
+
 CREATE TABLE discounts (
   discount_id serial NOT NULL,
   name varchar(50),
@@ -97,5 +103,18 @@ CREATE TABLE cart_items (
   FOREIGN KEY (product_id) REFERENCES products (product_id)
 );
 
+category_id
+1 - switches
+2 - keycaps
 
-INSERT 
+inventory_id
+1 - Alpacas
+
+INSERT INTO "public"."categories" ("category_id", "name", "description") VALUES (1, 'Switches', 'Switches for your keyboard!');
+
+INSERT INTO "public"."inventories" ("inventory_id", "quantity") VALUES (1, 100);
+
+INSERT INTO "public"."products" ("name", "description", "sku", "category_id", "inventory_id", "price", "image") VALUES
+('Alpacas Linear', 'In collaboration with Primekeyboard, we are happy to bring one of the best linear switches to you: Alpaca Linear Switch! 
+', 'Swi/Lin/62/Nyl', 1, 1,  8.00, bytea('/Users/colingoh/Desktop/project4image/alpacas.jpeg') );
+

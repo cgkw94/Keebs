@@ -7,6 +7,7 @@ const UserPage = () => {
   const storedJwt = cookies.get("token");
 
   const [jwt, setJwt] = useState(storedJwt || null);
+  const [numOfAddress, setNumOfAddress] = useState(0);
   const [userDetails, setUserDetails] = useState({
     username: "",
     first_name: "",
@@ -33,8 +34,21 @@ const UserPage = () => {
     });
   };
 
+  const fetchAddresses = async (url) => {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + jwt,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    setNumOfAddress(data.length);
+  };
+
   useEffect(() => {
     fetchUserDetails("http://localhost:5002/user/");
+    fetchAddresses("http://localhost:5002/user/address");
   }, []);
 
   const handleEditButton = () => {
@@ -76,7 +90,9 @@ const UserPage = () => {
           </Box>
           <Box align="center">
             <Button onClick={handleEditButton}>Edit</Button>
-            <Button onClick={handleAddressButton}>View Addresses</Button>
+            <Button onClick={handleAddressButton}>
+              View Addresses ({numOfAddress})
+            </Button>
           </Box>
         </Box>
       </Box>

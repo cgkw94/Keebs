@@ -150,7 +150,6 @@ app.patch("/user/update", auth, async (req, res) => {
 
 //create address
 app.post("/user/address", auth, async (req, res) => {
-  console.log(req.body);
   const {
     customer_id,
     address_line1,
@@ -186,11 +185,39 @@ app.get("/user/address", auth, async (req, res) => {
   try {
     const { username } = req.user;
 
-    const user = await pool.query(
+    const address = await pool.query(
       "SELECT * FROM addresses WHERE customer_id = (SELECT customer_id FROM customers WHERE username=$1)",
       [username]
     );
-    res.json(user.rows);
+    res.json(address.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//delete address
+app.delete("/user/address/delete/:id", auth, async (req, res) => {
+  try {
+    const addressId = req.params.id;
+
+    const deletedAddress = await pool.query(
+      "DELETE FROM addresses WHERE address_id = $1 RETURNING *;",
+      [addressId]
+    );
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get ALL products details
+
+app.get("/products", async (req, res) => {
+  try {
+    const allProducts = await pool.query(
+      "SELECT prod.product_id, prod.name, prod.description, prod.sku, prod.image, cat.category_name, cat.category_description, inven.quantity FROM products prod INNER JOIN categories cat ON cat.category_id = prod.category_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id;"
+    );
+
+    res.json(allProducts.rows);
   } catch (err) {
     console.error(err.message);
   }

@@ -10,7 +10,7 @@ const Address = () => {
   const [jwt, setJwt] = useState(storedJwt || null);
   const [addressData, setAddressData] = useState([]);
 
-  const fetchUserDetails = async (url) => {
+  const fetchAddresses = async (url) => {
     const res = await fetch(url, {
       method: "GET",
       headers: {
@@ -23,7 +23,7 @@ const Address = () => {
   };
 
   useEffect(() => {
-    fetchUserDetails("http://localhost:5002/user/address");
+    fetchAddresses("http://localhost:5002/user/address");
   }, []);
 
   const handleAddressButton = () => {
@@ -33,6 +33,7 @@ const Address = () => {
   const displayAddress = addressData.map((data) => {
     return (
       <AddressCard
+        addressId={data.address_id}
         name={data.name}
         address1={data.address_line1}
         address2={data.address_line2}
@@ -52,7 +53,7 @@ const Address = () => {
       <Button onClick={handleAddressButton}>ADD NEW ADDRESS</Button>
 
       <Box>
-        <Text>Addresses</Text>
+        <Text>Your Addresses</Text>
         {displayAddress}
       </Box>
     </Container>
