@@ -229,7 +229,7 @@ app.get("/products/:category", async (req, res) => {
 app.get("/products/details/:id", async (req, res) => {
   try {
     const fullProdDetails = await pool.query(
-      "SELECT prod.name, prod.product_id, prod.price, prod.description, img.image_thumb, inven.quantity, ls.spring, ls.stem, ls.top, ls.bottom, ls.pin FROM products prod INNER JOIN images img ON img.image_id = prod.image_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id INNER JOIN list_details ls ON ls.list_detail_id = prod.list_detail_id WHERE product_id = $1;",
+      "SELECT prod.name, prod.product_id, prod.price, prod.description, img.image_thumb, inven.quantity, to_jsonb(ls.*) - 'list_detail_id' as specs FROM products prod INNER JOIN images img ON img.image_id = prod.image_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id INNER JOIN list_details ls ON ls.list_detail_id = prod.list_detail_id WHERE product_id = $1;",
       [req.params.id]
     );
 

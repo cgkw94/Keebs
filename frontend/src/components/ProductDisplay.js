@@ -20,12 +20,13 @@ const ProductDisplay = () => {
 
   const [jwt, setJwt] = useState(storedJwt || null);
   const [productDetails, setProductDetails] = useState({
-    name: "",
-    price: "",
-    description: "",
-    image: "",
-    quantity: "",
-    list: {},
+    specs: {
+      pin: "",
+      top: "",
+      stem: "",
+      bottom: "",
+      spring: "",
+    },
   });
 
   const fetchProducts = async (url) => {
@@ -36,38 +37,26 @@ const ProductDisplay = () => {
       },
     });
     const data = await res.json();
-    setProductDetails({
-      name: data.name,
-      price: data.price,
-      description: data.description,
-      image: data.image_thumb,
-      quantity: data.quantity,
-      list: {
-        spring: data.spring,
-        stem: data.stem,
-        top: data.top,
-        bottom: data.bottom,
-        pin: data.pin,
-      },
-    });
+    console.log(data);
+    setProductDetails(data);
   };
 
+  console.log(productDetails);
   useEffect(() => {
     fetchProducts(`http://localhost:5002/products/details/${params.product}`);
   }, []);
 
-  console.log(productDetails);
   return (
     <Container display="flex" maxW="container.lg">
       <HStack>
         <Box boxSize="2xl" m={[8, 3]}>
-          <Image src={productDetails.image} />
+          <Image src={productDetails.image_thumb} />
         </Box>
         <ProductDetails
           name={productDetails.name}
           price={productDetails.price}
           description={productDetails.description}
-          list={productDetails.list}
+          specs={productDetails.specs}
           quantity={productDetails.quantity}
         />
       </HStack>

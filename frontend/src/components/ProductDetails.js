@@ -53,11 +53,11 @@ const ProductDetails = (props) => {
         <Text>PRODUCT INFORMATION</Text>
         <Text>{props.description}</Text>
         <UnorderedList>
-          <ListItem>{props.list.spring}</ListItem>
-          <ListItem>{props.list.stem}</ListItem>
-          <ListItem>{props.list.top}</ListItem>
-          <ListItem>{props.list.bottom}</ListItem>
-          <ListItem>{props.list.pin}</ListItem>
+          <ListItem>{props.specs.spring}</ListItem>
+          <ListItem>{props.specs.stem}</ListItem>
+          <ListItem>{props.specs.top}</ListItem>
+          <ListItem>{props.specs.bottom}</ListItem>
+          <ListItem>{props.specs.pin}</ListItem>
         </UnorderedList>
         <Text>These switches are sold in packs of 10.</Text>
         <Text>Quantity 1 = 10 switches</Text>
