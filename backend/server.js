@@ -209,15 +209,45 @@ app.delete("/user/address/delete/:id", auth, async (req, res) => {
   }
 });
 
-//get ALL products details
+//get product card details by category
 
-app.get("/products", async (req, res) => {
+app.get("/products/:category", async (req, res) => {
   try {
-    const allProducts = await pool.query(
-      "SELECT prod.product_id, prod.name, prod.description, prod.sku, prod.image, cat.category_name, cat.category_description, inven.quantity FROM products prod INNER JOIN categories cat ON cat.category_id = prod.category_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id;"
+    const product = await pool.query(
+      "SELECT prod.name, prod.product_id, prod.price, img.image_thumb FROM products prod INNER JOIN images img ON img.image_id = prod.image_id WHERE category_id=$1;",
+      [req.params.category]
     );
 
-    res.json(allProducts.rows);
+    res.json(product.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get full product details by product id
+
+app.get("/products/details/:id", async (req, res) => {
+  try {
+    const fullProdDetails = await pool.query(
+      "SELECT prod.name, prod.product_id, prod.price, prod.description, img.image_thumb, inven.quantity, ls.spring, ls.stem, ls.top, ls.bottom, ls.pin FROM products prod INNER JOIN images img ON img.image_id = prod.image_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id INNER JOIN list_details ls ON ls.list_detail_id = prod.list_detail_id WHERE product_id = $1;",
+      [req.params.id]
+    );
+
+    res.json(fullProdDetails.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get cart
+
+app.get("/cart", auth, async (req, res) => {
+  try {
+    const cartDetails = await pool.query(
+      "SELECT carts.cart_id, carts.customer_id, cartitems.product_id, cartitems.quantity, carts.total FROM carts carts INNER JOIN cart_items cartitems ON cartitems.cart_id = carts.cart_id"
+    );
+
+    res.json(cartDetails.rows);
   } catch (err) {
     console.error(err.message);
   }

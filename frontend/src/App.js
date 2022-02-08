@@ -8,6 +8,9 @@ import UserDetails from "./components/UserDetails";
 import UserPage from "./components/UserPage";
 import Address from "./components/Address";
 import NewAddress from "./components/NewAddress";
+import CategoryDisplay from "./components/CategoryDisplay";
+
+import ProductDisplay from "./components/ProductDisplay";
 
 function App() {
   const cookies = new Cookies();
@@ -35,6 +38,12 @@ function App() {
       </Route>
       <Route exact path="/user/address/add">
         <NewAddress />
+      </Route>
+      <Route exact path="/products/:category">
+        <CategoryDisplay />
+      </Route>
+      <Route exact path="/products/details/:product">
+        <ProductDisplay />
       </Route>
     </>
   );
