@@ -9,8 +9,8 @@ import UserPage from "./components/UserPage";
 import Address from "./components/Address";
 import NewAddress from "./components/NewAddress";
 import CategoryDisplay from "./components/CategoryDisplay";
-
 import ProductDisplay from "./components/ProductDisplay";
+import CartDisplay from "./components/CartDisplay";
 
 function App() {
   const cookies = new Cookies();
@@ -44,6 +44,9 @@ function App() {
       </Route>
       <Route exact path="/products/details/:product">
         <ProductDisplay />
+      </Route>
+      <Route exact path="/cart">
+        <CartDisplay />
       </Route>
     </>
   );

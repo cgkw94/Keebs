@@ -126,19 +126,24 @@ category_id
 
 inventory_id, image_id, list_detail_id
 1 - Alpacas
+2 - Tangerines
 
-INSERT INTO "public"."categories" ("category_id", "name", "description") VALUES (1, 'Switches', 'Switches for your keyboard!');
+INSERT INTO "public"."categories" ("category_id", "category_name", "category_description") VALUES (2, 'Switches', 'Switches for your keyboard!');
 
-INSERT INTO "public"."inventories" ("inventory_id", "quantity") VALUES (1, 100);
+INSERT INTO "public"."inventories" ("inventory_id", ) VALUES (2, 0, );
 
-INSERT INTO "public"."images" ("image_id", "image_thumb") VALUES (1, 'https://i.imgur.com/wQGxSTI.jpg');
+INSERT INTO "public"."images" ("image_id", "image_thumb") VALUES (2, 'https://i.imgur.com/UI5M7hJ.png');
 
-INSERT INTO "public"."list_details" ("list_detail_id", "spring", "stem","top", "bottom", "pin") VALUES (1, '62g Weight Gold Plated Spring', 'POM Stem', 'PC top', 'Nylon Bottom', '5 pin');
+INSERT INTO "public"."list_details" ("list_detail_id", "spring", "stem","top", "bottom", "pin") VALUES (2, '62g gold spring.', 'Housing is UHMWPE.', 'Pre-lubed ', 'Designed by C3.', 'Linear MX Switch.');
 
-INSERT INTO "public"."products" ("name", "description", "sku", "category_id", "inventory_id", "price", "image", "list_detail_id") VALUES
-('Alpacas Linear', 'In collaboration with Primekeyboard, we are happy to bring one of the best linear switches to you: Alpaca Linear Switch! 
-', 'Swi/Lin/62/Nyl', 1, 1,  8.00, 1, 1);
+INSERT INTO "public"."products" ("name", "description", "sku", "category_id", "inventory_id", "price", "image_id", "list_detail_id") VALUES
+('Tangerine Switch', 'Please note that this product is in stock.
+（This is the latest batch from JWK/Equalz June 2021） 
+', 'Swi/Lin/62/UHW', 1, 2,  9.00, 2, 2);
 
-INSERT INTO "public"."carts" ("customer_id", "total") VALUES (15, 56);
+INSERT INTO "public"."carts" ("customer_id", "total") VALUES (15, 9);
 
-INSERT INTO "public"."cart_items" ("cart_id", "product_id", "quantity") VALUES (1, 7, 7);
+INSERT INTO "public"."cart_items" ("cart_id", "product_id", "quantity") VALUES (1, 8 , 1);
+
+UPDATE "public"."carts" SET total = 18 WHERE cart_id = 1 WHERE customer_id = 15
+UPDATE "public"."cart_items" SET quantity = 2 WHERE cart_id = 1 AND product_id = 8;

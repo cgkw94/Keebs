@@ -44,6 +44,7 @@ app.post("/login", async (req, res) => {
           username: username,
           password: userDetails.userpassword,
           isAdmin: userDetails.admin,
+          customer_id: userDetails.customer_id,
         };
         const accessToken = generateAccessToken(user);
 
@@ -242,9 +243,12 @@ app.get("/products/details/:id", async (req, res) => {
 //get cart
 
 app.get("/cart", auth, async (req, res) => {
+  const { customer_id } = req.user;
+
   try {
     const cartDetails = await pool.query(
-      "SELECT carts.cart_id, carts.customer_id, cartitems.product_id, cartitems.quantity, carts.total FROM carts carts INNER JOIN cart_items cartitems ON cartitems.cart_id = carts.cart_id"
+      "SELECT carts.cart_id, carts.customer_id, cartitems.product_id, cartitems.quantity, carts.total FROM carts carts INNER JOIN cart_items cartitems ON cartitems.cart_id = carts.cart_id WHERE carts.customer_id = $1",
+      [customer_id]
     );
 
     res.json(cartDetails.rows);
