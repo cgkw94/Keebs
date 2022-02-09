@@ -3,12 +3,14 @@ import {
   Select,
   Box,
   Container,
+  Button,
   useDisclosure,
   MenuItem,
   Menu,
   MenuButton,
   MenuList,
 } from "@chakra-ui/react";
+import { FiShoppingCart, FiShoppingBag } from "react-icons/fi";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import Cookies from "universal-cookie";
 
@@ -22,6 +24,10 @@ const NavBar = () => {
   const handleSwitches = (e) => {
     console.log(e.target.value);
     window.location.href = `/products/${e.target.value}`;
+  };
+
+  const handleCart = () => {
+    window.location.href = "/cart";
   };
 
   return (
@@ -47,6 +53,18 @@ const NavBar = () => {
         <MenuItem>Stabilisers</MenuItem>
         <MenuItem>Keycaps</MenuItem>
       </MenuList>
+      <Button
+        my="5px"
+        colorScheme="green"
+        variant="ghost"
+        leftIcon={<FiShoppingBag size="24px" />}
+        size="lg"
+        p={2}
+        className="snipcart-checkout"
+        onClick={handleCart}
+      >
+        View Cart
+      </Button>
     </Menu>
   );
 };

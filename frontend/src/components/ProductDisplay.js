@@ -19,6 +19,12 @@ const ProductDisplay = () => {
   const storedJwt = cookies.get("token");
 
   const [jwt, setJwt] = useState(storedJwt || null);
+  const [userInputCart, setUserInputCart] = useState({
+    product_id: "",
+    price: "",
+    quantity: 1,
+  });
+  const [error, setError] = useState("");
   const [productDetails, setProductDetails] = useState({
     specs: {
       pin: "",
@@ -29,6 +35,12 @@ const ProductDisplay = () => {
     },
   });
 
+  const handleQtyChange = (input) => {
+    setUserInputCart((prevState) => {
+      return { ...prevState, quantity: input };
+    });
+  };
+
   const fetchProducts = async (url) => {
     const res = await fetch(url, {
       method: "GET",
@@ -37,27 +49,49 @@ const ProductDisplay = () => {
       },
     });
     const data = await res.json();
-    console.log(data);
     setProductDetails(data);
+    setUserInputCart((prevState) => {
+      return { ...prevState, product_id: data.product_id };
+    });
+    setUserInputCart((prevState) => {
+      return { ...prevState, price: parseInt(data.price) };
+    });
   };
 
-  console.log(productDetails);
   useEffect(() => {
     fetchProducts(`http://localhost:5002/products/details/${params.product}`);
   }, []);
 
+  const addToCart = async (url) => {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + jwt,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInputCart),
+    });
+    const data = await res.json();
+    console.log(data);
+  };
+
+  const handleAddCart = () => {
+    addToCart("http://localhost:5002/addtocart");
+    window.location.href = "/cart";
+  };
+
   return (
     <Container display="flex" maxW="container.lg">
       <HStack>
-        <Box boxSize="2xl" m={[8, 3]}>
-          <Image src={productDetails.image_thumb} />
-        </Box>
         <ProductDetails
+          image={productDetails.image_thumb}
           name={productDetails.name}
           price={productDetails.price}
           description={productDetails.description}
           specs={productDetails.specs}
           quantity={productDetails.quantity}
+          liftState={handleQtyChange}
+          onClick={handleAddCart}
         />
       </HStack>
     </Container>
