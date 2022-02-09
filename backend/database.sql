@@ -130,7 +130,7 @@ inventory_id, image_id, list_detail_id
 
 INSERT INTO "public"."categories" ("category_id", "category_name", "category_description") VALUES (2, 'Switches', 'Switches for your keyboard!');
 
-INSERT INTO "public"."inventories" ("inventory_id", ) VALUES (2, 0, );
+INSERT INTO "public"."inventories" ("inventory_id", ) VALUES (2, 0 );
 
 INSERT INTO "public"."images" ("image_id", "image_thumb") VALUES (2, 'https://i.imgur.com/UI5M7hJ.png');
 
@@ -147,3 +147,19 @@ INSERT INTO "public"."cart_items" ("cart_id", "product_id", "quantity") VALUES (
 
 UPDATE "public"."carts" SET total = 18 WHERE cart_id = 1 WHERE customer_id = 15
 UPDATE "public"."cart_items" SET quantity = 2 WHERE cart_id = 1 AND product_id = 8;
+
+SELECT 
+	carts.cart_id, carts.total,
+	(
+		SELECT json_agg(products)
+		FROM (
+			SELECT 
+			cartitems.product_id AS product_id,
+			cartitems.quantity AS quantity
+			FROM cart_items cartitems WHERE cartitems.cart_id = carts.cart_id
+		) products
+	)
+FROM 
+	carts 
+WHERE 
+	carts.customer_id = 15

@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 //generate jwt token
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "604800s",
+    expiresIn: "30d",
   });
 }
 
@@ -81,7 +81,11 @@ app.post("/register", async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     const newUser = await pool.query(
-      "INSERT INTO customers (username, userpassword, first_name, last_name, mobile_number, email, admin) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      `
+      INSERT INTO customers (username, userpassword, first_name, last_name, mobile_number, email, admin) 
+      VALUES($1, $2, $3, $4, $5, $6, $7) 
+      RETURNING *
+      `,
       [username, hash, first_name, last_name, mobile_number, email, admin]
     );
 
@@ -136,7 +140,11 @@ app.patch("/user/update", auth, async (req, res) => {
       } else {
         const hash = await bcrypt.hash(newPassword, 10);
         await pool.query(
-          "UPDATE customers SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5 WHERE customer_id = $6",
+          `
+          UPDATE customers 
+          SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5 
+          WHERE customer_id = $6
+          `,
           [hash, first_name, last_name, mobile_number, email, customer_id]
         );
         res.json("Update successful");
@@ -163,7 +171,11 @@ app.post("/user/address", auth, async (req, res) => {
 
   try {
     const newAddress = await pool.query(
-      "INSERT INTO addresses (customer_id, address_line1, address_line2, postal_code, country, address_type, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      `
+      INSERT INTO addresses (customer_id, address_line1, address_line2, postal_code, country, address_type, name) 
+      VALUES($1, $2, $3, $4, $5, $6, $7) 
+      RETURNING *
+      `,
       [
         customer_id,
         address_line1,
@@ -187,7 +199,14 @@ app.get("/user/address", auth, async (req, res) => {
     const { username } = req.user;
 
     const address = await pool.query(
-      "SELECT * FROM addresses WHERE customer_id = (SELECT customer_id FROM customers WHERE username=$1)",
+      `
+      SELECT * FROM addresses 
+      WHERE customer_id = (
+        SELECT customer_id 
+        FROM customers 
+        WHERE username=$1
+        )
+      `,
       [username]
     );
     res.json(address.rows);
@@ -215,7 +234,19 @@ app.delete("/user/address/delete/:id", auth, async (req, res) => {
 app.get("/products/:category", async (req, res) => {
   try {
     const product = await pool.query(
-      "SELECT prod.name, prod.product_id, prod.price, img.image_thumb FROM products prod INNER JOIN images img ON img.image_id = prod.image_id WHERE category_id=$1;",
+      `
+      SELECT 
+        prod.name, 
+        prod.product_id, 
+        prod.price, 
+        img.image_thumb 
+      FROM 
+        products prod 
+      INNER JOIN 
+        images img ON img.image_id = prod.image_id 
+      WHERE 
+        category_id=$1;
+      `,
       [req.params.category]
     );
 
@@ -230,7 +261,25 @@ app.get("/products/:category", async (req, res) => {
 app.get("/products/details/:id", async (req, res) => {
   try {
     const fullProdDetails = await pool.query(
-      "SELECT prod.name, prod.product_id, prod.price, prod.description, img.image_thumb, inven.quantity, to_jsonb(ls.*) - 'list_detail_id' as specs FROM products prod INNER JOIN images img ON img.image_id = prod.image_id INNER JOIN inventories inven ON inven.inventory_id = prod.inventory_id INNER JOIN list_details ls ON ls.list_detail_id = prod.list_detail_id WHERE product_id = $1;",
+      `
+      SELECT 
+        prod.name, 
+        prod.product_id, 
+        prod.price, prod.description, 
+        img.image_thumb, 
+        inven.quantity, 
+        to_jsonb(ls.*) - 'list_detail_id' as specs 
+      FROM 
+        products prod 
+      INNER JOIN 
+        images img ON img.image_id = prod.image_id 
+      INNER JOIN 
+        inventories inven ON inven.inventory_id = prod.inventory_id
+      INNER JOIN 
+        list_details ls ON ls.list_detail_id = prod.list_detail_id 
+      WHERE 
+        product_id = $1;
+      `,
       [req.params.id]
     );
 
@@ -247,11 +296,161 @@ app.get("/cart", auth, async (req, res) => {
 
   try {
     const cartDetails = await pool.query(
-      "SELECT carts.cart_id, carts.customer_id, cartitems.product_id, cartitems.quantity, carts.total FROM carts carts INNER JOIN cart_items cartitems ON cartitems.cart_id = carts.cart_id WHERE carts.customer_id = $1",
+      `SELECT 
+        carts.cart_id, 
+        carts.customer_id, 
+        cartitems.product_id, 
+        cartitems.quantity, 
+        carts.total 
+      FROM 
+        carts carts 
+      INNER JOIN 
+        cart_items cartitems ON cartitems.cart_id = carts.cart_id 
+      WHERE 
+        carts.customer_id = $1
+      `,
       [customer_id]
     );
 
     res.json(cartDetails.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//add to cart
+app.put("/addtocart", auth, async (req, res) => {
+  try {
+    const { customer_id } = req.user;
+
+    //what do i need in body?!?!?
+
+    const { product_id, price, quantity } = req.body;
+
+    //check if product in cart
+    //get product ids in cart
+    const productIdInCart = await pool.query(
+      `
+      SELECT product_id 
+      FROM cart_items 
+      WHERE 
+        cart_id = (
+          SELECT cart_id 
+          FROM carts 
+          WHERE customer_id = $1
+          )
+      `,
+      [customer_id]
+    );
+
+    //check if newly added product already exist in cart
+    const found = productIdInCart.rows.some(
+      (check) => check.product_id === product_id
+    );
+
+    // if found, update
+    // if not, put
+    if (found) {
+      const cart = await pool.query(
+        `
+        SELECT 
+          carts.cart_id, 
+          carts.total, 
+          (  
+            SELECT 
+              json_agg(products) AS products 
+            FROM 
+              ( SELECT 
+                  cartitems.product_id AS product_id, 
+                  cartitems. quantity AS quantity 
+                FROM 
+                  cart_items cartitems 
+                WHERE 
+                  cartitems.cart_id = carts.cart_id
+              ) products 
+          ) 
+            FROM carts 
+              WHERE carts.customer_id = $1
+        `,
+        [customer_id]
+      );
+
+      const cart_id = cart.rows[0].cart_id;
+
+      //find the exact product in cart by id
+      const productsArr = cart.rows[0].products;
+      const product = productsArr.find((prod) => {
+        return prod.product_id === product_id;
+      });
+
+      const currentTotal = parseInt(cart.rows[0].total);
+      const currentQty = product.quantity;
+
+      const newTotal = currentTotal + price * quantity;
+      const newQty = currentQty + quantity;
+
+      //check new quantity with database
+
+      const productDB = await pool.query(
+        `
+        SELECT 
+          quantity 
+        FROM 
+          inventories 
+        WHERE 
+          inventory_id = (
+            SELECT inventory_id 
+            FROM products 
+            WHERE product_id = $1
+          )
+        `,
+        [product_id]
+      );
+      const dbQty = productDB.rows[0].quantity;
+
+      if (newQty <= dbQty) {
+        await pool.query(
+          `
+          UPDATE carts SET total = $1 
+          WHERE customer_id = $2
+          `,
+          [newTotal, customer_id]
+        );
+        await pool.query(
+          `
+          UPDATE cart_items SET quantity = $1 
+          WHERE cart_id = $2 AND product_id = $3
+          `,
+          [newQty, cart_id, product_id]
+        );
+      } else {
+        res.json("Unable to add, reduce quantity!");
+      }
+    } else {
+      //insert into cart
+      const total = price * quantity;
+      await pool.query(
+        "INSERT INTO carts (customer_id, total) VALUES ($1, $2)",
+        [customer_id, total]
+      );
+      //find new cart id
+      const cart = await pool.query(
+        `
+        SELECT cart_id FROM carts 
+        WHERE customer_id = $1
+        `,
+        [customer_id]
+      );
+      const cart_id = cart.rows[0].cart_id;
+      //insert into cart items
+      await pool.query(
+        `
+        INSERT INTO cart_items (cart_id, product_id, quantity) 
+        VALUES ($1, $2, $3)
+        `,
+        [cart_id, product_id, quantity]
+      );
+    }
   } catch (err) {
     console.error(err.message);
   }
