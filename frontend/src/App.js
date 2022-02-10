@@ -11,6 +11,7 @@ import NewAddress from "./components/NewAddress";
 import CategoryDisplay from "./components/CategoryDisplay";
 import ProductDisplay from "./components/ProductDisplay";
 import CartDisplay from "./components/CartDisplay";
+import CheckoutPage from "./components/CheckoutPage";
 
 function App() {
   const cookies = new Cookies();
@@ -47,6 +48,9 @@ function App() {
       </Route>
       <Route exact path="/cart">
         <CartDisplay />
+      </Route>
+      <Route exact path="/checkout">
+        <CheckoutPage />
       </Route>
     </>
   );
