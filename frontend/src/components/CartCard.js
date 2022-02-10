@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Text,
   WrapItem,
   Image,
-  Button,
+  IconButton,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -12,6 +12,7 @@ import {
   NumberDecrementStepper,
 } from "@chakra-ui/react";
 import Cookies from "universal-cookie";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const CartCard = (props) => {
   const cookies = new Cookies();
@@ -45,9 +46,26 @@ const CartCard = (props) => {
     const data = await res.json();
   };
 
+  const deleteCart = async (url) => {
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + jwt,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInputCart),
+    });
+    const data = await res.json();
+  };
+
   const handleNewCart = () => {
     updateCart("http://localhost:5002/updatecart");
     props.liftState(userInputCart.quantity);
+  };
+
+  const handleDeleteCart = () => {
+    deleteCart("http://localhost:5002/deletecart");
+    window.location.reload(false);
   };
 
   return (
@@ -80,6 +98,11 @@ const CartCard = (props) => {
           </NumberInput>
         </Box>
         <Text>${props.total}</Text>
+        <IconButton
+          aria-label="Delete Cart"
+          icon={<DeleteIcon />}
+          onClick={handleDeleteCart}
+        />
       </Box>
     </WrapItem>
   );

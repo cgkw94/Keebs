@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Text, Button } from "@chakra-ui/react";
 import Cookies from "universal-cookie";
 import CartCard from "./CartCard";
 
@@ -10,6 +10,7 @@ const CartDisplay = () => {
   const [jwt, setJwt] = useState(storedJwt || null);
   const [cart, setCart] = useState([]);
   const [cartQty, setCartQty] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
   const [qtyChangeInput, setQtyChangeInput] = useState("");
 
   const handleQtyChange = (input) => {
@@ -29,9 +30,21 @@ const CartDisplay = () => {
     setCart(data);
     setCartQty(cartQty);
   };
+  const fetchTotal = async (url) => {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + jwt,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    setCartTotal(data.total);
+  };
 
   useEffect(() => {
     fetchCart(`http://localhost:5002/cart`);
+    fetchTotal(`http://localhost:5002/carttotal`);
   }, [qtyChangeInput]);
 
   const displayCart = cart.map((data) => {
@@ -54,6 +67,8 @@ const CartDisplay = () => {
   return (
     <Box>
       <Box>{displayCart}</Box>
+      <Text>Subtotal : ${cartTotal}</Text>
+      <Button>CHECK OUT</Button>
     </Box>
   );
 };

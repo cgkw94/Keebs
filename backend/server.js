@@ -331,6 +331,26 @@ app.get("/cart", auth, async (req, res) => {
   }
 });
 
+//get cart subtotal
+app.get("/carttotal", auth, async (req, res) => {
+  const { customer_id } = req.user;
+
+  try {
+    const cartTotal = await pool.query(
+      `
+      SELECT total
+      FROM carts 
+      WHERE customer_id = $1
+      `,
+      [customer_id]
+    );
+
+    res.json(cartTotal.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 //add to cart
 app.put("/addtocart", auth, async (req, res) => {
   try {
@@ -552,6 +572,57 @@ app.patch("/updatecart", auth, async (req, res) => {
     );
 
     res.json("Update Successful");
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//delete cart
+app.delete("/deletecart", auth, async (req, res) => {
+  try {
+    const { customer_id } = req.user;
+    const { cart_id, product_id, price, quantity } = req.body;
+
+    const cart = await pool.query(
+      `
+      SELECT total
+      FROM carts
+      WHERE cart_id = $1;
+      `,
+      [cart_id]
+    );
+
+    const currentTotal = parseInt(cart.rows[0].total);
+    const newTotal = currentTotal - price * quantity;
+
+    if (newTotal === 0) {
+      await pool.query(
+        `
+        DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2
+        `,
+        [cart_id, product_id]
+      );
+      await pool.query(
+        `
+        DELETE FROM carts WHERE cart_id = $1
+        `,
+        [cart_id]
+      );
+    } else {
+      await pool.query(
+        `
+        DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2
+        `,
+        [cart_id, product_id]
+      );
+
+      await pool.query(
+        `
+        UPDATE carts SET total = $1 WHERE cart_id = $2
+        `,
+        [newTotal, cart_id]
+      );
+    }
   } catch (err) {
     console.error(err.message);
   }
