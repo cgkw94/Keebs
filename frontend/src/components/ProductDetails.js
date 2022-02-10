@@ -30,17 +30,21 @@ const ProductDetails = (props) => {
 
   return (
     <Box maxW="70%" alignItems="center">
-      <Box align="center">
+      <Box align="center" paddingBottom="20px">
         <Image maxW="500" src={props.image} />
       </Box>
       <Box maxW="100%">
-        <Heading textAlign="center">{props.name}</Heading>
-        <Heading textAlign="center">${props.price}</Heading>
-        <Text fontSize="xl" textAlign="center">
-          Quantity{" "}
+        <Heading textAlign="center" paddingBottom="10px">
+          {props.name}
+        </Heading>
+        <Heading textAlign="center" paddingBottom="10px">
+          ${props.price}
+        </Heading>
+        <Text fontSize="xl" textAlign="center" paddingBottom="5px">
+          Quantity
         </Text>
       </Box>
-      <Box borderRadius="full" maxW="xl" align="center">
+      <Box borderRadius="full" maxW="xl" paddingLeft="342px">
         <Box>
           <NumberInput
             size="lg"

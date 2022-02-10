@@ -57,7 +57,6 @@ const Address = () => {
             ADD NEW ADDRESS
           </Button>
         </Box>
-
         <Text>Your Addresses</Text>
         {displayAddress}
       </Box>

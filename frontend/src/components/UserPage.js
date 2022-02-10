@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { Container, Text, Button, Box } from "@chakra-ui/react";
+import { Container, Text, Button, Box, Heading } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 
 const UserPage = () => {
@@ -63,9 +63,13 @@ const UserPage = () => {
   return (
     <>
       <NavBar />
-      <Box>
-        <Text align="center">My Account</Text>
-        <Text align="center">Logout</Text>
+      <Box align="center">
+        <Heading align="center" paddingTop="50px">
+          My Account
+        </Heading>
+        <Text as="u" align="center">
+          Logout
+        </Text>
         <Text align="center">Account Details</Text>
         <Box maxW="m" borderRadius="lg">
           <Box align="center">

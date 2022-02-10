@@ -83,9 +83,9 @@ const ProductDisplay = () => {
   };
 
   return (
-    <Container display="flex" maxW="container.lg">
+    <>
       <NavBar />
-      <HStack>
+      <HStack paddingLeft="320px" paddingTop="50px">
         <ProductDetails
           image={productDetails.image_thumb}
           name={productDetails.name}
@@ -97,7 +97,7 @@ const ProductDisplay = () => {
           onClick={handleAddCart}
         />
       </HStack>
-    </Container>
+    </>
   );
 };
 
