@@ -624,6 +624,106 @@ app.delete("/deletecart", auth, async (req, res) => {
   }
 });
 
+//checkout
+app.post("/checkout", auth, async (req, res) => {
+  try {
+    const { customer_id } = req.user;
+    //check if there is address_id
+    const validAddId = req.body.hasOwnProperty("address_id");
+
+    if (validAddId) {
+      const {
+        address_id,
+        name,
+        address_line1,
+        address_line2,
+        postal_code,
+        country,
+        address_type,
+      } = req.body;
+
+      //update address
+      await pool.query(
+        `
+        UPDATE 
+          addresses 
+        SET 
+          name = $1,
+          address_line1 = $2,
+          address_line2 = $3,
+          postal_code = $4,
+          country = $5,
+          address_type = $6
+        WHERE 
+          address_id = $7
+        `,
+        [
+          name,
+          address_line1,
+          address_line2,
+          postal_code,
+          country,
+          address_type,
+          address_id,
+        ]
+      );
+
+      //find cart
+      const cartDetails = await pool.query(
+        `
+        SELECT 
+          carts.cart_id, 
+          carts.customer_id, 
+          cartitems.product_id, 
+          img.image_thumb,
+          prod.name,
+          prod.price,
+          cartitems.quantity, 
+          carts.total,
+          inven.quantity AS inven_quantity
+        FROM 
+          carts carts 
+        INNER JOIN 
+          cart_items cartitems ON cartitems.cart_id = carts.cart_id 
+        INNER JOIN 
+          products prod ON prod.product_id = cartitems.product_id
+        INNER JOIN 
+          images img ON img.image_id = prod.image_id 
+        INNER JOIN 
+          inventories inven ON inven.inventory_id = prod.inventory_id
+        WHERE 
+          carts.customer_id = $1
+        ORDER BY 
+          cartitems.product_id;
+        `,
+        [customer_id]
+      );
+
+      const findDate = await pool.query("SELECT NOW()");
+      const date = findDate.rows[0].now;
+      const cart = cartDetails.rows;
+      const total = cart[0].total;
+      const fulfilment = "Not fulfilled";
+
+      // insert into orders
+      // find new order id (order by descending limit 1)
+      // insert into order_items
+      // delete cart_items
+      // delete cart
+    } else {
+      // insert new address
+      // find new address id (order by descending limit 1)
+      // insert into orders
+      // find new order id (order by descending limit 1)
+      // insert into order_items
+      // delete cart_items
+      // delete cart
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 app.listen(5002, () => {
   console.log("server has started on port 5002");
 });
