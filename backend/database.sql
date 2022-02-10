@@ -128,19 +128,24 @@ category_id
 inventory_id, image_id, list_detail_id
 1 - Alpacas
 2 - Tangerines
+3 - Wuque Stabs
+4 - GMK Apollo
+5 - DCS DELFTWARE
 
-INSERT INTO "public"."categories" ("category_id", "category_name", "category_description") VALUES (2, 'Switches', 'Switches for your keyboard!');
 
-INSERT INTO "public"."inventories" ("inventory_id", ) VALUES (2, 0 );
+UPDATE "categories" SET category_id = 2, category_name = 'Keycaps', category_description = 'Customise your keyboard now!!';
 
-INSERT INTO "public"."images" ("image_id", "image_thumb") VALUES (2, 'https://i.imgur.com/UI5M7hJ.png');
+INSERT INTO "public"."categories" ("category_id", "category_name", "category_description") VALUES (3, 'Stabilisers', 'Change your stabs now!!');
 
-INSERT INTO "public"."list_details" ("list_detail_id", "spring", "stem","top", "bottom", "pin") VALUES (2, '62g gold spring.', 'Housing is UHMWPE.', 'Pre-lubed ', 'Designed by C3.', 'Linear MX Switch.');
+INSERT INTO "public"."inventories" ("inventory_id", "quantity" ) VALUES (5, 39 );
+
+INSERT INTO "public"."images" ("image_id", "image_thumb") VALUES (5, 'https://i.imgur.com/2C9xRYz.png');
+
+INSERT INTO "public"."list_details" ("list_detail_id", "spring", "stem","top", "bottom", "pin") VALUES (5, 'Profile: DCS', 'Legends: Dye Sub', 'Plastic: PBT', 'Designed by Zephyraeon', 'baa baa black sheep');
 
 INSERT INTO "public"."products" ("name", "description", "sku", "category_id", "inventory_id", "price", "image_id", "list_detail_id") VALUES
-('Tangerine Switch', 'Please note that this product is in stock.
-（This is the latest batch from JWK/Equalz June 2021） 
-', 'Swi/Lin/62/UHW', 1, 2,  9.00, 2, 2);
+('DCS Delftware', 'Delftware is a set based on old porcelain artwork, painted by hand, the font and sublegends have all been chosen in order to make a set that looks refined but a little bit imperfect. I picked the theme a) because porcelain stuff is really cool if you think about the effort that goes into making it, and b) because blue and white are super awesome colours which look great together (see every other blue and white keycap set ever made). The sublegends and novelties were all designed being heavily based on actual porcelain artwork, in order to fit the theme better.
+', 'Kcp/PBT/Base/1.7', 2, 5,  279, 5, 5);
 
 INSERT INTO "public"."carts" ("customer_id", "total") VALUES (15, 9);
 

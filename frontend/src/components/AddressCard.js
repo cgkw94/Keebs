@@ -24,6 +24,7 @@ const AddressCard = (props) => {
     deleteAddress(
       `http://localhost:5002/user/address/delete/${props.addressId}`
     );
+    window.location.href = "/user/address";
   };
 
   return (

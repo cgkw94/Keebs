@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
-import { Container, Text, Button, Box } from "@chakra-ui/react";
+import {
+  Container,
+  Text,
+  Button,
+  Box,
+  Heading,
+  Flex,
+  IconButton,
+} from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import AddressCard from "./AddressCard";
 import NavBar from "./NavBar";
 
@@ -31,6 +40,10 @@ const Address = () => {
     window.location.href = "/user/address/add";
   };
 
+  const handleBackButton = () => {
+    window.location.href = "/user";
+  };
+
   const displayAddress = addressData.map((data) => {
     return (
       <AddressCard
@@ -45,20 +58,48 @@ const Address = () => {
     );
   });
 
+  const handleLogout = (e) => {
+    cookies.remove("username");
+    cookies.remove("token");
+    cookies.remove("admin");
+    cookies.remove("loggedIn");
+    window.location.href = "/";
+  };
+
   return (
     <>
       <NavBar />
+      <Box align="center">
+        <Heading align="center" paddingTop="50px">
+          My Account
+        </Heading>
+        <Text
+          as="u"
+          align="center"
+          onClick={handleLogout}
+          _hover={{
+            background: "white",
+            color: "teal.500",
+          }}
+        >
+          Logout
+        </Text>
+      </Box>
+      <IconButton
+        aria-label="Back"
+        icon={<ArrowBackIcon />}
+        onClick={handleBackButton}
+      />
       <Box>
-        <Text align="center">My Account</Text>
-        <Text align="center">Logout</Text>
-        <Text align="center">Account Details</Text>
-        <Box>
-          <Button align="center" onClick={handleAddressButton}>
-            ADD NEW ADDRESS
-          </Button>
-        </Box>
+        <Button align="center" onClick={handleAddressButton}>
+          ADD NEW ADDRESS
+        </Button>
+      </Box>
+      <Box align="center">
         <Text>Your Addresses</Text>
-        {displayAddress}
+        <Flex paddingTop="50px" align="center">
+          {displayAddress}
+        </Flex>
       </Box>
     </>
   );

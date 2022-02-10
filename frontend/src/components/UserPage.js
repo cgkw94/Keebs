@@ -60,6 +60,14 @@ const UserPage = () => {
     window.location.href = "/user/address";
   };
 
+  const handleLogout = (e) => {
+    cookies.remove("username");
+    cookies.remove("token");
+    cookies.remove("admin");
+    cookies.remove("loggedIn");
+    window.location.href = "/";
+  };
+
   return (
     <>
       <NavBar />
@@ -67,7 +75,15 @@ const UserPage = () => {
         <Heading align="center" paddingTop="50px">
           My Account
         </Heading>
-        <Text as="u" align="center">
+        <Text
+          as="u"
+          align="center"
+          onClick={handleLogout}
+          _hover={{
+            background: "white",
+            color: "teal.500",
+          }}
+        >
           Logout
         </Text>
         <Text align="center">Account Details</Text>

@@ -12,6 +12,7 @@ const CartDisplay = () => {
   const [cart, setCart] = useState([]);
   const [cartQty, setCartQty] = useState(0);
   const [cartTotal, setCartTotal] = useState(0);
+  const [cartIsEmpty, setCartIsEmpty] = useState(false);
   const [qtyChangeInput, setQtyChangeInput] = useState("");
 
   const handleQtyChange = (input) => {
@@ -40,6 +41,7 @@ const CartDisplay = () => {
       },
     });
     const data = await res.json();
+
     setCartTotal(data.total);
   };
 
@@ -68,6 +70,7 @@ const CartDisplay = () => {
   return (
     <Box>
       <NavBar />
+
       <Box>{displayCart}</Box>
       <Text>Subtotal : ${cartTotal}</Text>
       <Button>CHECK OUT</Button>
