@@ -15,6 +15,7 @@ import {
   Radio,
   RadioGroup,
 } from "@chakra-ui/react";
+import NavBar from "./NavBar";
 
 const NewAddress = () => {
   const cookies = new Cookies();
@@ -110,6 +111,7 @@ const NewAddress = () => {
 
   return (
     <>
+      <NavBar />
       <Container w="75%" mt="10">
         <Tabs w="100%" isFitted variant="enclosed" colorScheme="blue">
           <TabList mb="1em">

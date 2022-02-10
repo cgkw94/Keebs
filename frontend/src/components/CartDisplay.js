@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Text, Button } from "@chakra-ui/react";
 import Cookies from "universal-cookie";
 import CartCard from "./CartCard";
+import NavBar from "./NavBar";
 
 const CartDisplay = () => {
   const cookies = new Cookies();
@@ -66,6 +67,7 @@ const CartDisplay = () => {
 
   return (
     <Box>
+      <NavBar />
       <Box>{displayCart}</Box>
       <Text>Subtotal : ${cartTotal}</Text>
       <Button>CHECK OUT</Button>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Container } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import ProductCard from "./ProductCard";
+import NavBar from "./NavBar";
 
 const CategoryDisplay = () => {
   const params = useParams();
@@ -29,19 +30,24 @@ const CategoryDisplay = () => {
 
   const displayProducts = productArr.map((data) => {
     return (
-      <ProductCard
-        name={data.name}
-        price={data.price}
-        product_id={data.product_id}
-        image={data.image_thumb}
-      />
+      <>
+        <ProductCard
+          name={data.name}
+          price={data.price}
+          product_id={data.product_id}
+          image={data.image_thumb}
+        />
+      </>
     );
   });
 
   return (
-    <Box>
-      <Box>{displayProducts}</Box>
-    </Box>
+    <>
+      <NavBar />
+      <Flex paddingTop="90" paddingLeft="90" alignItems="equal">
+        {displayProducts}
+      </Flex>
+    </>
   );
 };
 

@@ -14,6 +14,7 @@ const ProductCard = (props) => {
         borderRadius="lg"
         overflow="hidden"
         onClick={onClick}
+        paddingLeft="20px"
       >
         <Image
           borderRadius="lg"
@@ -30,6 +31,7 @@ const ProductCard = (props) => {
           isTruncated
           id={props.product_id}
           align="center"
+          paddingTop="12px"
         >
           {props.name} - ${props.price}
         </Text>

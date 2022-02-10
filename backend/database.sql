@@ -123,6 +123,7 @@ CREATE TABLE cart_items (
 category_id
 1 - switches
 2 - keycaps
+3 - stabs
 
 inventory_id, image_id, list_detail_id
 1 - Alpacas

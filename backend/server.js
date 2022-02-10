@@ -7,6 +7,7 @@ let cors = require("cors");
 const pool = require("./db");
 const jwt = require("jsonwebtoken");
 const auth = require("./middleware/auth");
+const { query } = require("express");
 
 //middleware
 app.use(express.json());
@@ -105,7 +106,7 @@ app.post("/register", async (req, res) => {
 app.get("/user", auth, async (req, res) => {
   try {
     const { customer_id } = req.user;
-    console.log(customer_id);
+
     const user = await pool.query(
       "SELECT * FROM customers WHERE customer_id = $1",
       [customer_id]
@@ -119,10 +120,9 @@ app.get("/user", auth, async (req, res) => {
 //update user details
 app.patch("/user/update", auth, async (req, res) => {
   try {
-    const { password } = req.user;
+    const { customer_id } = req.user;
 
     const {
-      customer_id,
       oldPassword,
       newPassword,
       first_name,
@@ -130,6 +130,18 @@ app.patch("/user/update", auth, async (req, res) => {
       mobile_number,
       email,
     } = req.body.userDetails;
+
+    //get password
+
+    const getPassword = await pool.query(
+      `
+      SELECT userpassword 
+      FROM customers
+      WHERE customer_id = $1;`,
+      [customer_id]
+    );
+
+    const password = getPassword.rows[0].userpassword;
 
     const validOldPass = await bcrypt.compare(oldPassword, password);
 
@@ -141,8 +153,8 @@ app.patch("/user/update", auth, async (req, res) => {
         const hash = await bcrypt.hash(newPassword, 10);
         await pool.query(
           `
-          UPDATE customers 
-          SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5 
+          UPDATE customers
+          SET userpassword = $1, first_name = $2, last_name = $3, mobile_number = $4, email = $5
           WHERE customer_id = $6
           `,
           [hash, first_name, last_name, mobile_number, email, customer_id]
@@ -401,21 +413,6 @@ app.put("/addtocart", auth, async (req, res) => {
 
       const currentTotal = parseInt(cart.rows[0].total);
 
-      //check if product in cart
-      // const products = await pool.query(
-      //   `
-      //   SELECT product_id, quantity
-      //   FROM cart_items
-      //   WHERE
-      //     cart_id = (
-      //       SELECT cart_id
-      //       FROM carts
-      //       WHERE customer_id = $1
-      //       )
-      //   `,
-      //   [customer_id]
-      // );
-
       const products = cart.rows[0].products;
 
       //check if newly added product already exist in cart
@@ -580,7 +577,6 @@ app.patch("/updatecart", auth, async (req, res) => {
 //delete cart
 app.delete("/deletecart", auth, async (req, res) => {
   try {
-    const { customer_id } = req.user;
     const { cart_id, product_id, price, quantity } = req.body;
 
     const cart = await pool.query(

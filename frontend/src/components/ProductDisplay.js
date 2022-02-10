@@ -7,10 +7,12 @@ import {
   Text,
   Heading,
   Button,
+  Flex,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import ProductDetails from "./ProductDetails.js";
+import NavBar from "./NavBar.js";
 
 const ProductDisplay = () => {
   const params = useParams();
@@ -82,6 +84,7 @@ const ProductDisplay = () => {
 
   return (
     <Container display="flex" maxW="container.lg">
+      <NavBar />
       <HStack>
         <ProductDetails
           image={productDetails.image_thumb}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { Container, Text, Button, Box } from "@chakra-ui/react";
 import AddressCard from "./AddressCard";
+import NavBar from "./NavBar";
 
 const Address = () => {
   const cookies = new Cookies();
@@ -45,18 +46,22 @@ const Address = () => {
   });
 
   return (
-    <Container>
-      <Container>
-        <Text>My Account</Text>
-        <Text>Logout</Text>
-      </Container>
-      <Button onClick={handleAddressButton}>ADD NEW ADDRESS</Button>
-
+    <>
+      <NavBar />
       <Box>
+        <Text align="center">My Account</Text>
+        <Text align="center">Logout</Text>
+        <Text align="center">Account Details</Text>
+        <Box>
+          <Button align="center" onClick={handleAddressButton}>
+            ADD NEW ADDRESS
+          </Button>
+        </Box>
+
         <Text>Your Addresses</Text>
         {displayAddress}
       </Box>
-    </Container>
+    </>
   );
 };
 

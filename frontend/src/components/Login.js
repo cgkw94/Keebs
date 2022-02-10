@@ -17,6 +17,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { EmailIcon } from "@chakra-ui/icons";
+import NavBar from "./NavBar";
 
 const Login2 = () => {
   const [error, setError] = useState("");
@@ -172,6 +173,7 @@ const Login2 = () => {
 
   return (
     <>
+      <NavBar />
       <Container w="75%" mt="10">
         <Tabs w="100%" isFitted variant="enclosed" colorScheme="blue">
           <TabList mb="1em">
