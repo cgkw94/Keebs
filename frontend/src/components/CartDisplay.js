@@ -15,10 +15,6 @@ const CartDisplay = () => {
   const [cartIsEmpty, setCartIsEmpty] = useState(false);
   const [qtyChangeInput, setQtyChangeInput] = useState("");
 
-  const handleQtyChange = (input) => {
-    setQtyChangeInput(input);
-  };
-
   const fetchCart = async (url) => {
     const res = await fetch(url, {
       method: "GET",
@@ -32,6 +28,7 @@ const CartDisplay = () => {
     setCart(data);
     setCartQty(cartQty);
   };
+
   const fetchTotal = async (url) => {
     const res = await fetch(url, {
       method: "GET",
@@ -49,6 +46,14 @@ const CartDisplay = () => {
     fetchCart(`http://localhost:5002/cart`);
     fetchTotal(`http://localhost:5002/carttotal`);
   }, [qtyChangeInput]);
+
+  const handleQtyChange = (input) => {
+    setQtyChangeInput(input);
+  };
+
+  const handleCheckout = () => {
+    window.location.href = "/checkout";
+  };
 
   const displayCart = cart.map((data) => {
     const total = parseInt(data.price) * data.quantity;
@@ -73,7 +78,7 @@ const CartDisplay = () => {
 
       <Box>{displayCart}</Box>
       <Text>Subtotal : ${cartTotal}</Text>
-      <Button>CHECK OUT</Button>
+      <Button onClick={handleCheckout}>CHECK OUT</Button>
     </Box>
   );
 };
